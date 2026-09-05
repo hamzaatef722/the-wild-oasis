@@ -131,7 +131,7 @@ Menus.List = function List({ children, id }) {
   );
 };
 
-Menus.Button = function Button({ children, onClick, icon }) {
+Menus.Button = function Button({ children, onClick, icon, disabled = false }) {
   const { close } = useContext(MenusContext);
   function handleClick() {
     onClick?.();
@@ -139,7 +139,7 @@ Menus.Button = function Button({ children, onClick, icon }) {
   }
   return (
     <li>
-      <StyledButton onClick={handleClick}>
+      <StyledButton disabled={disabled} onClick={handleClick}>
         {icon} <span>{children}</span>
       </StyledButton>
     </li>

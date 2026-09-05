@@ -6,7 +6,7 @@ const StyledFormRow = styled.div`
 
   grid-template-columns: ${(props) =>
     props.orientation === "vertical" ? "1fr" : "24rem 1fr 1.2fr"};
-  gap: ${(props) => (props.orientation === "vertical" ? "0.8rem" : "2.4rem")};
+  gap: ${(props) => (props.orientation === "vertical" ? "0.6rem" : "2.4rem")};
 
   padding: 1.2rem 0;
 
@@ -25,16 +25,14 @@ const StyledFormRow = styled.div`
         : "1px solid var(--color-grey-100)"};
   }
 
-  /* Special treatment if the row contains buttons, and if it's NOT a vertical row */
-  ${(props) =>
-    props.orientation !== "vertical" &&
-    css`
-      &:has(button) {
-        display: flex;
-        justify-content: flex-end;
-        gap: 1.2rem;
-      }
-    `}
+  /* لو الصف فيه button، يتوسط دايمًا بصرف النظر عن الـ orientation */
+  &:has(button) {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1.2rem;
+    margin-top: 0.4rem;
+  }
 `;
 
 const Label = styled.label`
@@ -46,9 +44,9 @@ const Error = styled.span`
   color: var(--color-red-700);
 `;
 
-function FormRow({ label, error, children }) {
+function FormRow({ label, error, orientation = "horizontal", children }) {
   return (
-    <StyledFormRow>
+    <StyledFormRow orientation={orientation}>
       {label && <Label htmlFor={children.props.id}>{label}</Label>}
       {children}
       {error && <Error>{error}</Error>}

@@ -10,6 +10,20 @@ export async function getCabins() {
   return cabins;
 }
 
+export async function getCabin(id) {
+  const { data: cabin, error } = await supabase
+    .from("cabins")
+    .select("*")
+    .eq("id", id)
+    .single();
+
+  if (error) {
+    console.log(error);
+    throw new Error("the cabin could not be loaded");
+  }
+  return cabin;
+}
+
 export async function deleteCabin(id) {
   const { data, error } = await supabase.from("cabins").delete().eq("id", id);
 
@@ -69,4 +83,29 @@ export async function createEditCabin(newCabin, id) {
   }
 
   return data;
+}
+
+export async function getAvailableCabins(startDate, endDate) {
+  // كل الكابينات
+  const { data: cabins, error: cabinsError } = await supabase
+    .from("cabins")
+    .select("*");
+
+  if (cabinsError) throw new Error(cabinsError.message);
+
+  // الحجوزات اللي بتتعارض مع الفترة دي
+  const { data: bookings, error: bookingsError } = await supabase
+    .from("bookings")
+    .select("cabinId")
+    .lt("startDate", endDate)
+    .gt("endDate", startDate);
+
+  if (bookingsError) throw new Error(bookingsError.message);
+
+  const bookedCabinIds = bookings.map((b) => b.cabinId);
+  const availableCabins = cabins.filter(
+    (cabin) => !bookedCabinIds.includes(cabin.id),
+  );
+
+  return availableCabins;
 }
